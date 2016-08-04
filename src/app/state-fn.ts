@@ -61,7 +61,7 @@ const visibilityFilterReducer = (initial: string, action$: Observable<Action>): 
 };
 
 export const initialState = new OpaqueToken("initialState");
-export const dispatcher = new OpaqueToken("dispatcher");
+export const dispatch = new OpaqueToken("dispatcher");
 export const state = new OpaqueToken("state");
 export const stateAndDispatcher = [
     {
@@ -69,12 +69,12 @@ export const stateAndDispatcher = [
         useValue: {todos: [], visibilityFilter: 'SHOW_ALL'}
     },
     {
-        provide: dispatcher,
+        provide: dispatch,
         useValue: new BehaviorSubject<Action>(null)
     },
     {
         provide: state,
         useFactory: stateFn,
-        deps: [initialState, dispatcher]
+        deps: [initialState, dispatch]
     }
 ];
