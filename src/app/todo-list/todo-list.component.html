@@ -1,1 +1,5 @@
-<todo-item *ngFor="let todo of filtered" [item]="todo" (toggle)="onToggle(todo.id)"></todo-item>
+<ul>
+    <li *ngFor="let todo of filtered | async">
+        <todo-item [item]="todo" (toggle)="onToggle(todo.id)"></todo-item>
+    </li>
+</ul>

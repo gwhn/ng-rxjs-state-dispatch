@@ -3,7 +3,7 @@ import {Todo} from "../todo";
 
 @Component({
     moduleId: module.id,
-    selector: 'app-todo-item',
+    selector: 'todo-item',
     templateUrl: 'todo-item.component.html',
     styleUrls: ['todo-item.component.css']
 })
@@ -15,9 +15,7 @@ export class TodoItemComponent {
         this.toggle.emit(event);
     }
 
-    get textEffect(): string {
-        return this.item.completed
-            ? 'line-through'
-            : 'none';
+    get textEffect() {
+        return this.item.completed;
     }
 }

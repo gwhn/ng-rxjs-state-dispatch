@@ -1,30 +1,30 @@
 import {Component, Inject} from '@angular/core';
 import {TodoItemComponent} from "../todo-item/todo-item.component";
-import {state, dispatch} from "../state-fn";
-import {ToggleTodo} from "../toggle-todo";
-import {Subject, Observable} from "rxjs/Rx";
-import {Action} from "../action";
+import {State, Dispatch} from "../state-fn";
+import {ToggleTodoActionType} from "../toggle-todo-action-type";
+import {Observable, Observer} from "rxjs/Rx";
+import {ActionType} from "../action-types";
 import {AppState} from "../app-state";
+import {Todo} from "../todo";
 
 @Component({
     moduleId: module.id,
-    selector: 'app-todo-list',
+    selector: 'todo-list',
     templateUrl: 'todo-list.component.html',
     styleUrls: ['todo-list.component.css'],
     directives: [TodoItemComponent]
 })
 export class TodoListComponent {
-
-    constructor(@Inject(state) private state: Observable<AppState>,
-                @Inject(dispatch) private dispatch: Subject<Action>) {
+    constructor(@Inject(State) private state: Observable<AppState>,
+                @Inject(Dispatch) private dispatch: Observer<ActionType>) {
     }
 
     onToggle(id) {
-        this.dispatch.next(new ToggleTodo(id));
+        this.dispatch.next(new ToggleTodoActionType(id));
     }
 
     get filtered() {
-        return this.state.map(appState => {
+        return this.state.map<Todo[]>(appState => {
             return appState.todos.filter(todo => {
                 switch (appState.visibilityFilter) {
                     case 'SHOW_ACTIVE':

@@ -1,4 +1,4 @@
-export class ToggleTodo {
+export class ToggleTodoActionType {
     constructor(public id: number) {
     }
 }

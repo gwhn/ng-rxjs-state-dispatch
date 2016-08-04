@@ -1,6 +1,6 @@
 import { Ng2RxjsStateDispatchPage } from './app.po';
 
-describe('ng2-rxjs-state-dispatch App', function() {
+describe('ng2-rxjs-state-Dispatch App', function() {
   let page: Ng2RxjsStateDispatchPage;
 
   beforeEach(() => {

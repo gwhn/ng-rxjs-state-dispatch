@@ -38,6 +38,7 @@ const barrels: string[] = [
   'app/shared',
   'app/item-item',
   'app/item-list',
+  'app/add-todo',
   /** @cli-barrel */
 ];
 
