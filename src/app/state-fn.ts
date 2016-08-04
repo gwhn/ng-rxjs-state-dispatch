@@ -2,6 +2,10 @@ import {AppState} from "./app-state";
 import {Action, TodoAction, FilterAction} from "./action";
 import {Observable, BehaviorSubject} from "rxjs";
 import {Todo} from "./todo";
+import {AddTodo} from "./add-todo";
+import {ToggleTodo} from "./toggle-todo";
+import {SetVisibilityFilter} from "./set-visibility-filter";
+import {OpaqueToken} from "@angular/core";
 
 export const stateFn = (initial: AppState, action$: Observable<Action>): Observable<AppState> => {
     const subject$ = new BehaviorSubject(initial);
@@ -22,10 +26,55 @@ export const stateFn = (initial: AppState, action$: Observable<Action>): Observa
     return subject$;
 };
 
-const todosReducer = (initial: Todo[], action$: Observable<TodoAction>): Observable<Todo[]> => {
-    return undefined;
-}
+const todosReducer = (initial: Todo[], action$: Observable<Action>): Observable<Todo[]> => {
+    return action$
+        .scan((todos:Todo[], action:TodoAction) => {
+            if (action instanceof AddTodo) {
+                const newTodo = {
+                    id: action.id,
+                    text: action.text,
+                    completed: false
+                } as Todo;
+                return [...todos, newTodo];
+            } else if (action instanceof ToggleTodo) {
+                return todos.map((todo:Todo) => {
+                    //noinspection TypeScriptUnresolvedFunction
+                    return action.id !== todo.id
+                        ? todo
+                        : Object.assign({}, todo, {completed: !todo.completed});
+                });
+            } else {
+                return todos;
+            }
+        }, initial);
+};
 
-const visibilityFilterReducer = (initial: string, action$: Observable<FilterAction>): Observable<string> => {
-    return undefined;
-}
+const visibilityFilterReducer = (initial: string, action$: Observable<Action>): Observable<string> => {
+    return action$
+        .scan((filter:string, action:FilterAction) => {
+            if (action instanceof SetVisibilityFilter) {
+                return action.type;
+            } else {
+                return filter;
+            }
+        }, initial);
+};
+
+export const initState = new OpaqueToken("initState");
+export const dispatcher = new OpaqueToken("dispatcher");
+export const state = new OpaqueToken("state");
+export const stateAndDispatcher = [
+    {
+        provide: initState,
+        useValue: {todos: [], visibilityFilter: 'SHOW_ALL'}
+    },
+    {
+        provide: dispatcher,
+        useValue: new BehaviorSubject<Action>(null)
+    },
+    {
+        provide: state,
+        useFactory: stateFn,
+        deps: [initState, dispatcher]
+    }
+];

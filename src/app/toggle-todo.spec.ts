@@ -5,6 +5,6 @@ import {ToggleTodo} from './toggle-todo';
 
 describe('ToggleTodo', () => {
   it('should create an instance', () => {
-    expect(new ToggleTodo()).toBeTruthy();
+    expect(new ToggleTodo(1)).toBeTruthy();
   });
 });

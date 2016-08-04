@@ -5,6 +5,6 @@ import {SetVisibilityFilter} from './set-visibility-filter';
 
 describe('SetVisibilityFilter', () => {
   it('should create an instance', () => {
-    expect(new SetVisibilityFilter()).toBeTruthy();
+    expect(new SetVisibilityFilter("test")).toBeTruthy();
   });
 });
