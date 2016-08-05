@@ -24,6 +24,7 @@ export class TodoListComponent {
     get filtered() {
         return this.state.map(appState => {
             return appState.todos
+                .sort((a, b) => a.text < b.text ? -1 : a.text > b.text ? 1 : 0)
                 .filter(todo => {
                     switch (appState.visibilityFilter) {
                         case 'SHOW_ACTIVE':

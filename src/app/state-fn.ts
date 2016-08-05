@@ -1,5 +1,8 @@
 import {AppState} from "./app-state";
-import {Action, TodoAction, FilterAction, AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction} from "./actions";
+import {
+    Action, TodoAction, FilterAction,
+    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction
+} from "./actions";
 import {Todo} from "./todo";
 import {Observable, BehaviorSubject} from "rxjs/Rx";
 import {OpaqueToken} from "@angular/core";
@@ -25,10 +28,7 @@ export const stateFn = (initial: AppState, action$: Observable<Action>): Observa
 
 const todosReducer = (initial: Todo[], action$: Observable<Action>): Observable<Todo[]> => {
     const id = (todos: Todo[]) => {
-        const length = todos.length;
-        return length > 0
-            ? todos[length - 1].id + 1
-            : 1;
+        return todos.reduce((a, v) => v.id > a ? v.id : a, 0) + 1;
     };
 
     return action$
