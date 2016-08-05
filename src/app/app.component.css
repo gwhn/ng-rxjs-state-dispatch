@@ -1,0 +1,8 @@
+:host a {
+    text-decoration: none;
+    margin: 0 1em 0 0;
+}
+
+:host a.underline {
+    text-decoration: underline;
+}
