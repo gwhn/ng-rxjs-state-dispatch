@@ -1,4 +1,4 @@
 export class AddTodoActionType {
-    constructor(public id: number, public text: string) {
+    constructor(public text: string) {
     }
 }
