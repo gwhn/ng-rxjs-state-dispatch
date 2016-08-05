@@ -25,16 +25,17 @@ export class TodoListComponent {
 
     get filtered() {
         return this.state.map(appState => {
-            return appState.todos.filter(todo => {
-                switch (appState.visibilityFilter) {
-                    case 'SHOW_ACTIVE':
-                        return !todo.completed;
-                    case 'SHOW_COMPLETED':
-                        return todo.completed;
-                    default:
-                        return true;
-                }
-            });
+            return appState.todos
+                .filter(todo => {
+                    switch (appState.visibilityFilter) {
+                        case 'SHOW_ACTIVE':
+                            return !todo.completed;
+                        case 'SHOW_COMPLETED':
+                            return todo.completed;
+                        default:
+                            return true;
+                    }
+                });
         });
     }
 }
