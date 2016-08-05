@@ -1,7 +1,7 @@
-import {AppState} from "./app-state";
+import {AppState, Filters} from "./app-state";
 import {
     Action, TodoAction, FilterAction,
-    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction
+    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction, SetSortOrderAction
 } from "./actions";
 import {Todo} from "./todo";
 import {Observable, BehaviorSubject} from "rxjs/Rx";
@@ -12,11 +12,11 @@ export const stateFn = (initial: AppState, action$: Observable<Action>): Observa
     Observable
         .zip(
             todosReducer(initial.todos, action$),
-            visibilityFilterReducer(initial.visibilityFilter, action$),
-            (todos, visibilityFilter) => {
+            filtersReducer(initial.filters, action$),
+            (todos, filters) => {
                 return {
                     todos,
-                    visibilityFilter
+                    filters
                 } as AppState;
             }
         )
@@ -53,13 +53,19 @@ const todosReducer = (initial: Todo[], action$: Observable<Action>): Observable<
         }, initial);
 };
 
-const visibilityFilterReducer = (initial: string, action$: Observable<Action>): Observable<string> => {
+const filtersReducer = (initial: Filters, action$: Observable<Action>): Observable<Filters> => {
     return action$
-        .scan((filter: string, action: FilterAction) => {
+        .scan((filters: Filters, action: FilterAction) => {
             if (action instanceof SetVisibilityFilterAction) {
-                return action.type;
+                //noinspection TypeScriptUnresolvedFunction
+                return Object.assign({}, filters, {visibility: action.type});
             }
-            return filter;
+            if (action instanceof SetSortOrderAction) {
+                //noinspection TypeScriptUnresolvedFunction
+                return Object.assign({}, filters, {sortOrder: action.direction});
+            }
+            return filters;
+
         }, initial);
 };
 
@@ -71,7 +77,10 @@ export const StateAndDispatch = [
         provide: InitialState,
         useValue: {
             todos: [],
-            visibilityFilter: 'SHOW_ALL'
+            filters: {
+                visibility: 'SHOW_ALL',
+                sortOrder: 'ASC'
+            }
         } as AppState
     },
     {

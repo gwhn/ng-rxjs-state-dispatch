@@ -24,9 +24,17 @@ export class TodoListComponent {
     get filtered() {
         return this.state.map(appState => {
             return appState.todos
-                .sort((a, b) => a.text < b.text ? -1 : a.text > b.text ? 1 : 0)
+                .sort((a, b) => {
+                    switch (appState.filters.sortOrder) {
+                        case 'DESC':
+                            return a.text > b.text ? -1 : a.text < b.text ? 1 : 0;
+                        case 'ASC':
+                        default:
+                            return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+                    }
+                })
                 .filter(todo => {
-                    switch (appState.visibilityFilter) {
+                    switch (appState.filters.visibility) {
                         case 'SHOW_ACTIVE':
                             return !todo.completed;
                         case 'SHOW_COMPLETED':
