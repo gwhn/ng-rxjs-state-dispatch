@@ -13,11 +13,13 @@ export const stateFn = (initial: AppState, action$: Observable<ActionType>): Obs
         .zip(
             todosReducer(initial.todos, action$),
             visibilityFilterReducer(initial.visibilityFilter, action$),
-            (todos, visibilityFilter) => {
+            nextIdReducer(initial.nextId, action$),
+            (todos, visibilityFilter, nextId) => {
                 return {
                     todos,
-                    visibilityFilter
-                };
+                    visibilityFilter,
+                    nextId
+                } as AppState;
             }
         )
         .subscribe(state => {
@@ -28,7 +30,7 @@ export const stateFn = (initial: AppState, action$: Observable<ActionType>): Obs
 
 const todosReducer = (initial: Todo[], action$: Observable<ActionType>): Observable<Todo[]> => {
     return action$
-        .scan((todos:Todo[], action:TodoActionType) => {
+        .scan((todos: Todo[], action: TodoActionType) => {
             if (action instanceof AddTodoActionType) {
                 const newTodo = {
                     id: action.id,
@@ -36,29 +38,38 @@ const todosReducer = (initial: Todo[], action$: Observable<ActionType>): Observa
                     completed: false
                 } as Todo;
                 return [...todos, newTodo];
-            } else if (action instanceof ToggleTodoActionType) {
-                return todos.map((todo:Todo) => {
+            }
+            if (action instanceof ToggleTodoActionType) {
+                return todos.map((todo: Todo) => {
                     //noinspection TypeScriptUnresolvedFunction
                     return action.id !== todo.id
                         ? todo
                         : Object.assign({}, todo, {completed: !todo.completed});
                 });
-            } else {
-                return todos;
             }
+            return todos;
         }, initial);
 };
 
 const visibilityFilterReducer = (initial: string, action$: Observable<ActionType>): Observable<string> => {
     return action$
-        .scan((filter:string, action:FilterActionType) => {
+        .scan((filter: string, action: FilterActionType) => {
             if (action instanceof SetVisibilityFilterActionType) {
                 return action.type;
-            } else {
-                return filter;
             }
+            return filter;
         }, initial);
 };
+
+const nextIdReducer = (initial: number, action$: Observable<ActionType>): Observable<number> => {
+    return action$
+        .scan((nextId: number, action: TodoActionType) => {
+            if (action instanceof AddTodoActionType) {
+                return nextId += 1;
+            }
+            return nextId;
+        }, initial);
+}
 
 export const InitialState = new OpaqueToken('InitialState');
 export const Dispatch = new OpaqueToken('Dispatch');
@@ -66,7 +77,11 @@ export const State = new OpaqueToken('State');
 export const StateAndDispatch = [
     {
         provide: InitialState,
-        useValue: {todos: [], visibilityFilter: 'SHOW_ALL'} as AppState
+        useValue: {
+            todos: [],
+            visibilityFilter: 'SHOW_ALL',
+            nextId: 1
+        } as AppState
     },
     {
         provide: Dispatch,
