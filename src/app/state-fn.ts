@@ -80,7 +80,7 @@ export const StateAndDispatch = [
         useValue: {
             todos: [],
             visibilityFilter: 'SHOW_ALL',
-            nextId: 0
+            nextId: 1
         } as AppState
     },
     {
