@@ -24,7 +24,7 @@ export class TodoListComponent {
     }
 
     get filtered() {
-        return this.state.map<Todo[]>(appState => {
+        return this.state.map(appState => {
             return appState.todos.filter(todo => {
                 switch (appState.visibilityFilter) {
                     case 'SHOW_ACTIVE':
