@@ -1,11 +1,9 @@
 import {Component, Inject} from '@angular/core';
 import {TodoItemComponent} from "../todo-item/todo-item.component";
 import {State, Dispatch} from "../state-fn";
-import {ToggleTodoActionType} from "../toggle-todo-action-type";
 import {Observable, Observer} from "rxjs/Rx";
-import {ActionType} from "../action-types";
+import {Action, ToggleTodoAction} from "../actions";
 import {AppState} from "../app-state";
-import {Todo} from "../todo";
 
 @Component({
     moduleId: module.id,
@@ -16,18 +14,27 @@ import {Todo} from "../todo";
 })
 export class TodoListComponent {
     constructor(@Inject(State) private state: Observable<AppState>,
-                @Inject(Dispatch) private dispatch: Observer<ActionType>) {
+                @Inject(Dispatch) private dispatch: Observer<Action>) {
     }
 
     onToggle(id) {
-        this.dispatch.next(new ToggleTodoActionType(id));
+        this.dispatch.next(new ToggleTodoAction(id));
     }
 
     get filtered() {
         return this.state.map(appState => {
             return appState.todos
+                .sort((a, b) => {
+                    switch (appState.filters.sortOrder) {
+                        case 'DESC':
+                            return a.text > b.text ? -1 : a.text < b.text ? 1 : 0;
+                        case 'ASC':
+                        default:
+                            return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+                    }
+                })
                 .filter(todo => {
-                    switch (appState.visibilityFilter) {
+                    switch (appState.filters.visibility) {
                         case 'SHOW_ACTIVE':
                             return !todo.completed;
                         case 'SHOW_COMPLETED':
