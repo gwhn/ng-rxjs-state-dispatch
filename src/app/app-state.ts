@@ -1,6 +1,7 @@
 import {Todo} from "./todo";
 
 export interface AppState {
-    todos: Todo[]
+    todos: Todo[];
     visibilityFilter: string;
+    nextId: number;
 }

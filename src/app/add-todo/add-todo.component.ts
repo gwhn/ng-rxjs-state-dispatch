@@ -4,7 +4,6 @@ import {Dispatch, State} from "../state-fn";
 import {Observer, Observable} from "rxjs/Rx";
 import {ActionType} from "../action-types";
 import {AppState} from "../app-state";
-import 'rxjs/add/operator/max';
 
 @Component({
     moduleId: module.id,
@@ -13,17 +12,11 @@ import 'rxjs/add/operator/max';
     styleUrls: ['add-todo.component.css']
 })
 export class AddTodoComponent {
-    private nextId: number;
+    private nextId:number;
 
-    constructor(@Inject(State) private state: Observable<AppState>,
+    constructor(@Inject(State) private state:Observable<AppState>,
                 @Inject(Dispatch) private dispatch: Observer<ActionType>) {
-        this.state
-            .map(as => {
-                return as.todos
-                    .map(v => v.id)
-                    .reduce((a, v) => v > a ? v : a, 0);
-            })
-            .subscribe(v => this.nextId = v + 1);
+        state.subscribe(value => this.nextId = value.nextId);
     }
 
     onClick(input) {
