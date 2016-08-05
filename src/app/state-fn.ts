@@ -1,13 +1,10 @@
 import {AppState} from "./app-state";
-import {ActionType, TodoActionType, FilterActionType} from "./action-types";
+import {Action, TodoAction, FilterAction, AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction} from "./actions";
 import {Todo} from "./todo";
 import {Observable, BehaviorSubject} from "rxjs/Rx";
 import {OpaqueToken} from "@angular/core";
-import {AddTodoActionType} from "./add-todo-action-type";
-import {ToggleTodoActionType} from "./toggle-todo-action-type";
-import {SetVisibilityFilterActionType} from "./set-visibility-filter-action-type";
 
-export const stateFn = (initial: AppState, action$: Observable<ActionType>): Observable<AppState> => {
+export const stateFn = (initial: AppState, action$: Observable<Action>): Observable<AppState> => {
     const subject$ = new BehaviorSubject(initial);
     Observable
         .zip(
@@ -26,7 +23,7 @@ export const stateFn = (initial: AppState, action$: Observable<ActionType>): Obs
     return subject$;
 };
 
-const todosReducer = (initial: Todo[], action$: Observable<ActionType>): Observable<Todo[]> => {
+const todosReducer = (initial: Todo[], action$: Observable<Action>): Observable<Todo[]> => {
     const id = (todos: Todo[]) => {
         const length = todos.length;
         return length > 0
@@ -35,8 +32,8 @@ const todosReducer = (initial: Todo[], action$: Observable<ActionType>): Observa
     };
 
     return action$
-        .scan((todos: Todo[], action: TodoActionType) => {
-            if (action instanceof AddTodoActionType) {
+        .scan((todos: Todo[], action: TodoAction) => {
+            if (action instanceof AddTodoAction) {
                 const newTodo = {
                     id: id(todos),
                     text: action.text,
@@ -44,7 +41,7 @@ const todosReducer = (initial: Todo[], action$: Observable<ActionType>): Observa
                 } as Todo;
                 return [...todos, newTodo];
             }
-            if (action instanceof ToggleTodoActionType) {
+            if (action instanceof ToggleTodoAction) {
                 return todos.map((todo: Todo) => {
                     //noinspection TypeScriptUnresolvedFunction
                     return action.id !== todo.id
@@ -56,10 +53,10 @@ const todosReducer = (initial: Todo[], action$: Observable<ActionType>): Observa
         }, initial);
 };
 
-const visibilityFilterReducer = (initial: string, action$: Observable<ActionType>): Observable<string> => {
+const visibilityFilterReducer = (initial: string, action$: Observable<Action>): Observable<string> => {
     return action$
-        .scan((filter: string, action: FilterActionType) => {
-            if (action instanceof SetVisibilityFilterActionType) {
+        .scan((filter: string, action: FilterAction) => {
+            if (action instanceof SetVisibilityFilterAction) {
                 return action.type;
             }
             return filter;
@@ -79,7 +76,7 @@ export const StateAndDispatch = [
     },
     {
         provide: Dispatch,
-        useValue: new BehaviorSubject<ActionType>(null)
+        useValue: new BehaviorSubject<Action>(null)
     },
     {
         provide: State,

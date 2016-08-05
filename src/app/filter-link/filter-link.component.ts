@@ -2,8 +2,7 @@ import {Component, Inject, Input} from '@angular/core';
 import {State, Dispatch} from "../state-fn";
 import {AppState} from "../app-state";
 import {Observable, Observer} from "rxjs/Rx";
-import {ActionType} from "../action-types";
-import {SetVisibilityFilterActionType} from "../set-visibility-filter-action-type";
+import {Action, SetVisibilityFilterAction} from "../actions";
 
 @Component({
     moduleId: module.id,
@@ -16,14 +15,14 @@ export class FilterLinkComponent {
     private isSelected: boolean = false;
 
     constructor(@Inject(State) private state: Observable<AppState>,
-                @Inject(Dispatch) private dispatch: Observer<ActionType>) {
+                @Inject(Dispatch) private dispatch: Observer<Action>) {
         this.state
             .map(as => as.visibilityFilter === this.filter)
             .subscribe(v => this.isSelected = v);
     }
 
     onClick(event) {
-        const actionType = new SetVisibilityFilterActionType(this.filter);
+        const actionType = new SetVisibilityFilterAction(this.filter);
         this.dispatch.next(actionType);
     }
 
