@@ -1,9 +1,8 @@
 import {Component, Inject} from '@angular/core';
 import {AddTodoActionType} from "../add-todo-action-type";
-import {Dispatch, State} from "../state-fn";
-import {Observer, Observable} from "rxjs/Rx";
+import {Dispatch} from "../state-fn";
+import {Observer} from "rxjs/Rx";
 import {ActionType} from "../action-types";
-import {AppState} from "../app-state";
 
 @Component({
     moduleId: module.id,
@@ -12,15 +11,11 @@ import {AppState} from "../app-state";
     styleUrls: ['add-todo.component.css']
 })
 export class AddTodoComponent {
-    private nextId:number;
-
-    constructor(@Inject(State) private state:Observable<AppState>,
-                @Inject(Dispatch) private dispatch: Observer<ActionType>) {
-        state.subscribe(value => this.nextId = value.nextId);
+    constructor(@Inject(Dispatch) private dispatch: Observer<ActionType>) {
     }
 
     onClick(input) {
-        const addTodo = new AddTodoActionType(this.nextId, input.value);
+        const addTodo = new AddTodoActionType(input.value);
         this.dispatch.next(addTodo);
         input.value = '';
     }
