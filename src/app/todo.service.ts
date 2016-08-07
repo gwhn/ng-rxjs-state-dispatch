@@ -37,7 +37,7 @@ export class TodoService {
     get filtered$(): Observable<Todo[]> {
         return this.todos$
             .map(ts => {
-                return ts.sort((a, b) => {
+                return [...ts].sort((a, b) => {
                     switch (this.sortOrder) {
                         case 'DESC':
                             return a.text > b.text ? -1 : a.text < b.text ? 1 : 0;

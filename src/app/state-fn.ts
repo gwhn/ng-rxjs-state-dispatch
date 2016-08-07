@@ -22,6 +22,7 @@ export const stateFn = (initial: AppState, action$: Observable<Action>): Observa
                 } as AppState;
             }
         )
+        .do(v => console.log(v))
         .subscribe(state => {
             subject$.next(state);
         });
