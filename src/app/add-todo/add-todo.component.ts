@@ -1,7 +1,5 @@
-import {Component, Inject} from '@angular/core';
-import {Dispatch} from "../state-fn";
-import {Observer} from "rxjs/Rx";
-import {Action, AddTodoAction} from "../actions";
+import {Component} from '@angular/core';
+import {TodoService} from "../todo.service";
 
 @Component({
     moduleId: module.id,
@@ -10,12 +8,15 @@ import {Action, AddTodoAction} from "../actions";
     styleUrls: ['add-todo.component.css']
 })
 export class AddTodoComponent {
-    constructor(@Inject(Dispatch) private dispatch: Observer<Action>) {
+    private count = 0;
+
+    constructor(private service: TodoService) {
+        service.count$.subscribe(v => this.count = v);
     }
 
     onClick(input) {
-        const addTodo = new AddTodoAction(input.value);
-        this.dispatch.next(addTodo);
+        this.service.add(input.value);
+        this.service.log(`Added ${input.value}`);
         input.value = '';
     }
 }

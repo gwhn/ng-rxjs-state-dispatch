@@ -1,7 +1,7 @@
 import {AppState, Filters} from "./app-state";
 import {
     Action, TodoAction, FilterAction,
-    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction, SetSortOrderAction
+    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction, SetSortOrderAction, LogAction
 } from "./actions";
 import {Todo} from "./todo";
 import {Observable, BehaviorSubject} from "rxjs/Rx";
@@ -13,10 +13,12 @@ export const stateFn = (initial: AppState, action$: Observable<Action>): Observa
         .zip(
             todosReducer(initial.todos, action$),
             filtersReducer(initial.filters, action$),
-            (todos, filters) => {
+            logReducer(initial.log, action$),
+            (todos, filters, log) => {
                 return {
                     todos,
-                    filters
+                    filters,
+                    log
                 } as AppState;
             }
         )
@@ -69,6 +71,16 @@ const filtersReducer = (initial: Filters, action$: Observable<Action>): Observab
         }, initial);
 };
 
+const logReducer = (initial: string[], action$: Observable<Action>): Observable<string[]> => {
+    return action$
+        .scan((log: string[], action: LogAction) => {
+            if (action instanceof LogAction) {
+                return [...log, action.message];
+            }
+            return log;
+        }, initial);
+};
+
 export const InitialState = new OpaqueToken('InitialState');
 export const Dispatch = new OpaqueToken('Dispatch');
 export const State = new OpaqueToken('State');
@@ -80,7 +92,8 @@ export const StateAndDispatch = [
             filters: {
                 visibility: 'SHOW_ALL',
                 sortOrder: 'ASC'
-            }
+            },
+            log: []
         } as AppState
     },
     {

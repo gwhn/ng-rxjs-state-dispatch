@@ -1,7 +1,3 @@
-import {Inject} from "@angular/core";
-import {Dispatch} from "./state-fn";
-import {Observer} from "rxjs/Rx";
-
 export class AddTodoAction {
     constructor(public text: string) {
     }
@@ -22,6 +18,11 @@ export class SetSortOrderAction {
     }
 }
 
+export class LogAction {
+    constructor(public message: string) {
+    }
+}
+
 export type TodoAction = AddTodoAction | ToggleTodoAction;
 export type FilterAction = SetVisibilityFilterAction | SetSortOrderAction;
-export type Action = TodoAction | FilterAction;
+export type Action = TodoAction | FilterAction | LogAction;

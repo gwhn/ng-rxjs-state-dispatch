@@ -1,48 +1,25 @@
-import {Component, Inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {TodoItemComponent} from "../todo-item/todo-item.component";
-import {State, Dispatch} from "../state-fn";
-import {Observable, Observer} from "rxjs/Rx";
-import {Action, ToggleTodoAction} from "../actions";
-import {AppState} from "../app-state";
+import {TodoService} from "../todo.service";
+import {Todo} from "../todo";
 
 @Component({
     moduleId: module.id,
     selector: 'todo-list',
     templateUrl: 'todo-list.component.html',
     styleUrls: ['todo-list.component.css'],
-    directives: [TodoItemComponent]
+    directives: [TodoItemComponent],
+    providers: [TodoService]
 })
 export class TodoListComponent {
-    constructor(@Inject(State) private state: Observable<AppState>,
-                @Inject(Dispatch) private dispatch: Observer<Action>) {
+    private filtered: Todo[];
+
+    constructor(private service:TodoService) {
+        service.filtered$.subscribe(ts => this.filtered = ts);
     }
 
     onToggle(id) {
-        this.dispatch.next(new ToggleTodoAction(id));
-    }
-
-    get filtered() {
-        return this.state.map(appState => {
-            return appState.todos
-                .sort((a, b) => {
-                    switch (appState.filters.sortOrder) {
-                        case 'DESC':
-                            return a.text > b.text ? -1 : a.text < b.text ? 1 : 0;
-                        case 'ASC':
-                        default:
-                            return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
-                    }
-                })
-                .filter(todo => {
-                    switch (appState.filters.visibility) {
-                        case 'SHOW_ACTIVE':
-                            return !todo.completed;
-                        case 'SHOW_COMPLETED':
-                            return todo.completed;
-                        default:
-                            return true;
-                    }
-                });
-        });
+        this.service.toggle(id);
+        this.service.log(`toggled todo #${id}`);
     }
 }

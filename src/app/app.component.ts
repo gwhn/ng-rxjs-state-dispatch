@@ -3,6 +3,8 @@ import {AddTodoComponent} from "./add-todo/add-todo.component";
 import {StateAndDispatch} from "./state-fn";
 import {TodoListComponent} from "./todo-list/todo-list.component";
 import {FilterListComponent} from "./filter-list/filter-list.component";
+import {TodoService} from "./todo.service";
+import {LogListComponent} from "./log-list/log-list.component";
 
 @Component({
     moduleId: module.id,
@@ -12,9 +14,10 @@ import {FilterListComponent} from "./filter-list/filter-list.component";
     directives: [
         AddTodoComponent,
         TodoListComponent,
-        FilterListComponent
+        FilterListComponent,
+        LogListComponent
     ],
-    providers: [StateAndDispatch],
+    providers: [StateAndDispatch, TodoService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
