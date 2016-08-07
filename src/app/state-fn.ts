@@ -1,7 +1,8 @@
 import {AppState, Filters} from "./app-state";
 import {
     Action, TodoAction, FilterAction,
-    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction, SetSortOrderAction, LogAction
+    AddTodoAction, ToggleTodoAction, SetVisibilityFilterAction, SetSortOrderAction, LogAction, SortAscendingAction,
+    SortDescendingAction
 } from "./actions";
 import {Todo} from "./todo";
 import {Observable, BehaviorSubject} from "rxjs/Rx";
@@ -52,6 +53,16 @@ const todosReducer = (initial: Todo[], action$: Observable<Action>): Observable<
                         : Object.assign({}, todo, {completed: !todo.completed});
                 });
             }
+            if (action instanceof SortAscendingAction) {
+                return [...todos].sort((a, b) => {
+                    return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+                });
+            }
+            if (action instanceof SortDescendingAction) {
+                return [...todos].sort((a, b) => {
+                    return a.text > b.text ? -1 : a.text < b.text ? 1 : 0;
+                });
+            }
             return todos;
         }, initial);
 };
@@ -92,7 +103,7 @@ export const StateAndDispatch = [
             todos: [],
             filters: {
                 visibility: 'SHOW_ALL',
-                sortOrder: 'ASC'
+                sortOrder: ''
             },
             log: []
         } as AppState

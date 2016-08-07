@@ -4,7 +4,7 @@ import {AppState} from "./app-state";
 import {Observable, Observer} from "rxjs/Rx";
 import {
     Action, LogAction, AddTodoAction, ToggleTodoAction, SetSortOrderAction,
-    SetVisibilityFilterAction
+    SetVisibilityFilterAction, SortAscendingAction, SortDescendingAction
 } from "./actions";
 import {Todo} from "./todo";
 
@@ -37,17 +37,6 @@ export class TodoService {
     get filtered$(): Observable<Todo[]> {
         return this.todos$
             .map(ts => {
-                return [...ts].sort((a, b) => {
-                    switch (this.sortOrder) {
-                        case 'DESC':
-                            return a.text > b.text ? -1 : a.text < b.text ? 1 : 0;
-                        case 'ASC':
-                        default:
-                            return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
-                    }
-                });
-            })
-            .map(ts => {
                 return ts.filter(t => {
                     switch (this.visibility) {
                         case 'SHOW_ACTIVE':
@@ -61,7 +50,7 @@ export class TodoService {
             });
     }
 
-    log(message) {
+    log(message: string): void {
         Observable
             .create(obs => {
                 setTimeout(() => {
@@ -73,21 +62,26 @@ export class TodoService {
             .subscribe(value => this.dispatch.next(new LogAction(value)));
     }
 
-    add(text) {
+    add(text: string): void {
         const addTodo = new AddTodoAction(text);
         this.dispatch.next(addTodo);
     }
 
-    toggle(id) {
+    toggle(id: number): void {
         this.dispatch.next(new ToggleTodoAction(id));
     }
 
-    sortDirection(order: string) {
+    sortDirection(order: string): void {
         const action = new SetSortOrderAction(order);
         this.dispatch.next(action);
+        if (order === 'ASC'){
+            this.dispatch.next(new SortAscendingAction());
+        } else {
+            this.dispatch.next(new SortDescendingAction());
+        }
     }
 
-    setVisibility(filter: string) {
+    setVisibility(filter: string): void {
         const action = new SetVisibilityFilterAction(filter);
         this.dispatch.next(action);
     }
