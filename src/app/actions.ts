@@ -23,6 +23,18 @@ export class LogAction {
     }
 }
 
-export type TodoAction = AddTodoAction | ToggleTodoAction;
-export type FilterAction = SetVisibilityFilterAction | SetSortOrderAction;
-export type Action = TodoAction | FilterAction | LogAction;
+export class SortAscendingAction {
+}
+
+export class SortDescendingAction {
+}
+
+export type TodoAction = AddTodoAction
+    | ToggleTodoAction
+    | SortAscendingAction
+    | SortDescendingAction;
+export type FilterAction = SetVisibilityFilterAction
+    | SetSortOrderAction;
+export type Action = TodoAction
+    | FilterAction
+    | LogAction;
