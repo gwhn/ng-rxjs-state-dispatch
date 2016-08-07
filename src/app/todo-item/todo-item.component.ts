@@ -14,8 +14,4 @@ export class TodoItemComponent {
     onClick(event) {
         this.toggle.emit(event);
     }
-
-    get textEffect() {
-        return this.item.completed;
-    }
 }

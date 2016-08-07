@@ -1,3 +1,3 @@
-<div (click)="onClick($event)" [ngClass]="{'line-through': textEffect}">
+<div (click)="onClick($event)" [ngClass]="{'line-through': item.completed}">
   {{item.id}} - {{item.text}}
 </div>

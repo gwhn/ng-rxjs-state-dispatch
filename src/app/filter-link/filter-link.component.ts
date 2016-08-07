@@ -1,8 +1,5 @@
-import {Component, Inject, Input} from '@angular/core';
-import {State, Dispatch} from "../state-fn";
-import {AppState} from "../app-state";
-import {Observable, Observer} from "rxjs/Rx";
-import {Action, SetVisibilityFilterAction} from "../actions";
+import {Component, Input} from '@angular/core';
+import {TodoService} from "../todo.service";
 
 @Component({
     moduleId: module.id,
@@ -14,20 +11,12 @@ export class FilterLinkComponent {
     @Input() filter: string;
     private isSelected: boolean = false;
 
-    constructor(@Inject(State) private state: Observable<AppState>,
-                @Inject(Dispatch) private dispatch: Observer<Action>) {
-        this.state
-            .map(as => as.filters.visibility === this.filter)
-            .subscribe(v => this.isSelected = v);
+    constructor(private service:TodoService) {
+        service.visibility$.map(v => v === this.filter).subscribe(v => this.isSelected = v);
     }
 
     onClick(event) {
-        const action = new SetVisibilityFilterAction(this.filter);
-        this.dispatch.next(action);
+        this.service.setVisibility(this.filter);
+        this.service.log(`filtered by ${this.filter}`);
     }
-
-    get textEffect() {
-        return this.isSelected;
-    }
-
 }

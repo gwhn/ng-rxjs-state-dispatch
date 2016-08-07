@@ -1,8 +1,5 @@
-import {Component, Input, Inject} from '@angular/core';
-import {State, Dispatch} from "../state-fn";
-import {Observable, Observer} from "rxjs/Rx";
-import {AppState} from "../app-state";
-import {Action, SetSortOrderAction} from "../actions";
+import {Component, Input} from '@angular/core';
+import {TodoService} from "../todo.service";
 
 @Component({
     moduleId: module.id,
@@ -14,20 +11,12 @@ export class SortLinkComponent {
     @Input() order: string;
     private isSelected: boolean = false;
 
-    constructor(@Inject(State) private state: Observable<AppState>,
-                @Inject(Dispatch) private dispatch: Observer<Action>) {
-        this.state
-            .map(as => as.filters.sortOrder === this.order)
-            .subscribe(v => this.isSelected = v);
+    constructor(private service:TodoService) {
+        service.sortOrder$.map(so => so == this.order).subscribe(v => this.isSelected = v);
     }
 
     onClick(event) {
-        const action = new SetSortOrderAction(this.order);
-        this.dispatch.next(action);
+        this.service.sortDirection(this.order);
+        this.service.log(`sorted by ${this.order}`);
     }
-
-    get textEffect() {
-        return this.isSelected;
-    }
-
 }

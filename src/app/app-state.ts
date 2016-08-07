@@ -7,5 +7,6 @@ export interface Filters {
 
 export interface AppState {
     todos: Todo[];
-    filters: Filters
+    filters: Filters;
+    log: string[];
 }

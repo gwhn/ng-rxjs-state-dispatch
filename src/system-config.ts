@@ -42,6 +42,7 @@ const barrels: string[] = [
   'app/filter-link',
   'app/filter-list',
   'app/sort-link',
+  'app/log-list',
   /** @cli-barrel */
 ];
 
