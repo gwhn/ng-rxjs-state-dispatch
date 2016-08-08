@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    padding: 0 0.5em;
+    background-color: lightgray;
+}
+
+ol {
+    height: 25vh;
+    overflow: auto;
+}
